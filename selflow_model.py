@@ -121,8 +121,8 @@ class SelFlowModel(object):
             #misc.imsave('%s/flow_bw_color_%s.png' % (save_dir, save_name_list[i]), np_flow_bw_color[0])
             #write_flo('%s/flow_fw_%s.flo' % (save_dir, save_name_list[i]), np_flow_fw[0])
             #write_flo('%s/flow_bw_%s.flo' % (save_dir, save_name_list[i]), np_flow_bw[0])
-            misc.imsave('/SelFlow/share/result/%d.png' % (i), np_flow_fw_color[0])
-            write_flo('/SelFlow/share/result/%d.flo' % (i), np_flow_fw[0])
+            misc.imsave('/share/result/2/%d.png' % (i), np_flow_fw_color[0])
+            write_flo('/share/result/2/%d.flo' % (i), np_flow_fw[0])
             
             print('Finish %d/%d' % (i+1, dataset.data_num))    
             
