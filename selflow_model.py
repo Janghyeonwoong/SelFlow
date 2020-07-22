@@ -27,7 +27,7 @@ class SelFlowModel(object):
                  regularizer_scale=1e-4, cpu_device='/cpu:0', save_dir='KITTI', checkpoint_dir='checkpoints', 
                  model_name='model', sample_dir='sample', summary_dir='summary', training_mode="no_distillation", 
                  is_restore_model=False, restore_model='./models/KITTI/no_census_no_occlusion',
-                 dataset_config={}, self_supervision_config={}):
+                 dataset_config={}, self_supervision_config={}, data_list_file='', img_dir=''):
         self.batch_size = batch_size
         self.iter_steps = iter_steps
         self.initial_learning_rate = initial_learning_rate
@@ -50,13 +50,16 @@ class SelFlowModel(object):
         self.dataset_config = dataset_config
         self.self_supervision_config = self_supervision_config
         self.shared_device = '/gpu:0' if self.num_gpus == 1 else cpu_device
+        self.data_list_file = data_list_file
+        self.img_dir = img_dir
+
         assert(np.mod(batch_size, num_gpus) == 0)
         self.batch_size_per_gpu = int(batch_size / np.maximum(num_gpus, 1))
         
         self.save_dir = save_dir
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)         
-        
+        '''
         self.checkpoint_dir = '/'.join([self.save_dir, checkpoint_dir])
         if not os.path.exists(self.checkpoint_dir):
             os.makedirs(self.checkpoint_dir) 
@@ -78,10 +81,10 @@ class SelFlowModel(object):
             os.makedirs(('/'.join([self.summary_dir, 'train']))) 
         if not os.path.exists('/'.join([self.summary_dir, 'test'])):
             os.makedirs(('/'.join([self.summary_dir, 'test'])))             
-    
+        '''
                     
     def test(self, restore_model, save_dir, is_normalize_img=True):
-        dataset = BasicDataset(data_list_file=self.dataset_config['data_list_file'], img_dir=self.dataset_config['img_dir'], is_normalize_img=is_normalize_img)
+        dataset = BasicDataset(data_list_file=self.data_list_file, img_dir=self.img_dir, is_normalize_img=is_normalize_img)
         save_name_list = dataset.data_list[:, -1]
         iterator = dataset.create_one_shot_iterator(dataset.data_list, num_parallel_calls=self.num_input_threads)
         batch_img0, batch_img1, batch_img2 = iterator.get_next()
@@ -121,8 +124,9 @@ class SelFlowModel(object):
             #misc.imsave('%s/flow_bw_color_%s.png' % (save_dir, save_name_list[i]), np_flow_bw_color[0])
             #write_flo('%s/flow_fw_%s.flo' % (save_dir, save_name_list[i]), np_flow_fw[0])
             #write_flo('%s/flow_bw_%s.flo' % (save_dir, save_name_list[i]), np_flow_bw[0])
-            misc.imsave('/SelFlow/share/result/%d.png' % (i), np_flow_fw_color[0])
-            write_flo('/SelFlow/share/result/%d.flo' % (i), np_flow_fw[0])
+            #print(os.path.join(save_dir, '%d.png' % (i)))
+            misc.imsave( os.path.join(save_dir, '%d.png' % (i)), np_flow_fw_color[0])
+            write_flo(os.path.join(save_dir, '%d.flo' % (i)), np_flow_fw[0])
             
             print('Finish %d/%d' % (i+1, dataset.data_num))    
             

@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
+import argparse
 
 from selflow_model import SelFlowModel
 from config.extract_config import config_dict
@@ -13,6 +14,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 #os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >tmp')
 #os.environ['CUDA_VISIBLE_DEVICES']=str(np.argmax([int(x.split()[2]) for x in open('tmp','r').readlines()]))
 #os.system('rm tmp')
+parser = argparse.ArgumentParser(description='config arg')
+parser.add_argument('-d', '--imagedir', type=str, help='image directory')
+parser.add_argument('-t', '--imagetxt', type=str, help='choose file')
+parser.add_argument('-s', '--savedir', type=str, help='save directory')
+
+args = parser.parse_args()
 
 
 def main(_):
@@ -37,7 +44,7 @@ def main(_):
                          log_device_placement=run_config['log_device_placement'],
                          regularizer_scale=run_config['regularizer_scale'],
                          cpu_device=run_config['cpu_device'],
-                         save_dir=run_config['save_dir'],
+                         save_dir=args.savedir,
                          checkpoint_dir=run_config['checkpoint_dir'],
                          model_name=run_config['model_name'],
                          sample_dir=run_config['sample_dir'],
@@ -46,12 +53,14 @@ def main(_):
                          is_restore_model=run_config['is_restore_model'],
                          restore_model=run_config['restore_model'],
                          dataset_config=dataset_config,
-                         self_supervision_config=self_supervision_config
+                         self_supervision_config=self_supervision_config,
+                         data_list_file=args.imagetxt,
+                         img_dir=args.imagedir
                          )
     
     if run_config['mode'] == 'test':
         model.test(restore_model=config['test']['restore_model'],
-                   save_dir=config['test']['save_dir'],
+                   save_dir=args.savedir,
                    is_normalize_img=dataset_config['is_normalize_img'])
     else:
         raise ValueError('Invalid mode. Mode should be one of {test}')
