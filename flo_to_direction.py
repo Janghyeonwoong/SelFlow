@@ -25,19 +25,19 @@ def angle_to_direction(pixel_value):
     if pixel_value < -180 + half_step:
         return 5
     elif pixel_value < -180 + one_step + half_step:
-        return 6
+        return 4
     elif pixel_value < -180 + one_step * 2 + half_step:
         return 7
     elif pixel_value < -180 + one_step * 3 + half_step:
-        return 8
+        return 2
     elif pixel_value < -180 + one_step * 4 + half_step:
         return 1
     elif pixel_value < -180 + one_step * 5 + half_step:
-        return 2
+        return 8
     elif pixel_value < -180 + one_step * 6 + half_step:
         return 3
     elif pixel_value < -180 + one_step * 7 + half_step:
-        return 4
+        return 6
     else:
         return 5  
 
@@ -89,8 +89,8 @@ def draw_line(image, direction):
     else:
         cv.circle(image, center, int(center_x/2), (0,0,0), thickness=2)
 
-flo_dir = '/usb/SAMSUNG/result/1'
-result_dir = '/usb/SAMSUNG/vector/1'
+flo_dir = 'F:/result/1'
+result_dir = 'F:/vector'
 
 height = 576
 width  = 576
